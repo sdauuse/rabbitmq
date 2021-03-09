@@ -6,9 +6,15 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="spring-rabbitmq-consumer2" />
         <module name="rabbitmq-consumer" />
+        <module name="spring-rabbitmq-producer" />
         <module name="rabbitmq-producer" />
+        <module name="spring-rabbitmq-consumer" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="spring-rabbitmq-consumer" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>
