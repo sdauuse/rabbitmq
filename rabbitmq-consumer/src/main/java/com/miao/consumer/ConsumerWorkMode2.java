@@ -8,9 +8,9 @@ import java.util.concurrent.TimeoutException;
 /**
  * @author miaoyin
  * @date 2021/3/9 - 13:36
- * @commet: 简单模式，一个生产者对应一个消费者
+ * @commet: 工作模式，一个生产者对应多个消费者
  */
-public class ConsumerHelloWorld {
+public class ConsumerWorkMode2 {
     public static void main(String[] args) throws IOException, TimeoutException {
         //1.创建连接工厂
         ConnectionFactory factory = new ConnectionFactory();
@@ -39,7 +39,7 @@ public class ConsumerHelloWorld {
 
          */
         //如果没有一个名字叫hello_world的队列，则会创建该队列，如果有则不会创建
-        channel.queueDeclare("hello_world", true, false, false, null);
+        channel.queueDeclare("work_queues", true, false, false, null);
 
 
         // 接收消息
@@ -55,10 +55,10 @@ public class ConsumerHelloWorld {
              */
             @Override
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
-                System.out.println("consumerTag：" + consumerTag);
+               /* System.out.println("consumerTag：" + consumerTag);
                 System.out.println("Exchange：" + envelope.getExchange());
                 System.out.println("RoutingKey：" + envelope.getRoutingKey());
-                System.out.println("properties：" + properties);
+                System.out.println("properties：" + properties);*/
                 System.out.println("body：" + new String(body));
             }
         };
@@ -71,7 +71,7 @@ public class ConsumerHelloWorld {
             3. callback：回调对象
 
          */
-        channel.basicConsume("hello_world", true, consumer);
+        channel.basicConsume("work_queues", true, consumer);
 
 
         //关闭资源？不要

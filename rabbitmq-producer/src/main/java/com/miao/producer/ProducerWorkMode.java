@@ -1,18 +1,21 @@
-package com.miao.consumer;
+package com.miao.producer;
 
-import com.rabbitmq.client.*;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
 
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
 /**
  * @author miaoyin
- * @date 2021/3/9 - 13:36
- * @commet: 简单模式，一个生产者对应一个消费者
+ * @date 2021/3/9 - 14:13
+ * @commet:工作模式
  */
-public class ConsumerHelloWorld {
+public class ProducerWorkMode {
     public static void main(String[] args) throws IOException, TimeoutException {
         //1.创建连接工厂
+
         ConnectionFactory factory = new ConnectionFactory();
         //2. 设置参数
         factory.setHost("10.13.12.95");//ip  默认值 localhost
@@ -39,41 +42,25 @@ public class ConsumerHelloWorld {
 
          */
         //如果没有一个名字叫hello_world的队列，则会创建该队列，如果有则不会创建
-        channel.queueDeclare("hello_world", true, false, false, null);
-
-
-        // 接收消息
-        Consumer consumer = new DefaultConsumer(channel) {
-            /*
-                回调方法，当收到消息后，会自动执行该方法
-
-                1. consumerTag：标识
-                2. envelope：获取一些信息，交换机，路由key...
-                3. properties:配置信息
-                4. body：数据
-
-             */
-            @Override
-            public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
-                System.out.println("consumerTag：" + consumerTag);
-                System.out.println("Exchange：" + envelope.getExchange());
-                System.out.println("RoutingKey：" + envelope.getRoutingKey());
-                System.out.println("properties：" + properties);
-                System.out.println("body：" + new String(body));
-            }
-        };
-
-         /*
-        basicConsume(String queue, boolean autoAck, Consumer callback)
+        channel.queueDeclare("work_queues", true, false, false, null);
+        /*
+        basicPublish(String exchange, String routingKey, BasicProperties props, byte[] body)
         参数：
-            1. queue：队列名称
-            2. autoAck：是否自动确认
-            3. callback：回调对象
+            1. exchange：交换机名称。简单模式下交换机会使用默认的 ""
+            2. routingKey：路由名称
+            3. props：配置信息
+            4. body：发送消息数据
 
          */
-        channel.basicConsume("hello_world", true, consumer);
+        for (int i = 0; i < 10; i++) {
+            String body = "hello rabbitmq~~~" + i;
+            //6. 发送消息
+            channel.basicPublish("", "work_queues", null, body.getBytes());
+        }
 
 
-        //关闭资源？不要
+        //7.释放资源
+        channel.close();
+        connection.close();
     }
 }
